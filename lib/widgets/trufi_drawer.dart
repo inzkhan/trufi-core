@@ -13,7 +13,6 @@ import 'package:trufi_core/widgets/social_media/social_media.dart';
 import '../pages/about.dart';
 import '../pages/feedback.dart';
 import '../pages/saved_places/saved_places.dart';
-import '../pages/team.dart';
 import '../trufi_configuration.dart';
 
 class TrufiDrawer extends StatefulWidget {

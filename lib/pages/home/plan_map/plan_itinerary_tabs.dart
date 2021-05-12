@@ -79,7 +79,6 @@ class PlanItineraryTabPagesState extends State<PlanItineraryTabPages>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -137,7 +136,6 @@ class PlanItineraryTabPagesState extends State<PlanItineraryTabPages>
     PlanItinerary itinerary,
     AdEntity ad,
   ) {
-    final theme = Theme.of(context);
     final localization = TrufiLocalization.of(context);
 
     return SizedBox(

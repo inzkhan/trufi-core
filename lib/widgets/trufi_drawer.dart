@@ -108,11 +108,11 @@ class TrufiDrawerState extends State<TrufiDrawer> {
               localization.menuFeedback,
               FeedbackPage.route,
             ),
-          _buildListItem(
-            Icons.people,
-            localization.menuTeam,
-            TeamPage.route,
-          ),
+          // _buildListItem(
+          //   Icons.people,
+          //   localization.menuTeam,
+          //   TeamPage.route,
+          // ),
           _buildListItem(
             Icons.info,
             localization.menuAbout,

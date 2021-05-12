@@ -4,7 +4,6 @@ import 'package:trufi_core/entities/plan_entity/plan_entity.dart';
 import 'package:trufi_core/l10n/trufi_localization.dart';
 import 'package:trufi_core/widgets/vertical_swipe_detector.dart';
 
-
 class PlanItineraryTabPages extends StatefulWidget {
   final TabController tabController;
   final List<PlanItinerary> itineraries;
@@ -83,9 +82,9 @@ class PlanItineraryTabPagesState extends State<PlanItineraryTabPages>
     final theme = Theme.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: theme.primaryColor,
+        color: Colors.white,
         boxShadow: <BoxShadow>[
-          BoxShadow(color: theme.primaryColor, blurRadius: 4.0)
+          BoxShadow(color: Colors.black.withAlpha(100), blurRadius: 4.0)
         ],
       ),
       child: SafeArea(
@@ -107,7 +106,7 @@ class PlanItineraryTabPagesState extends State<PlanItineraryTabPages>
                 Container(
                   padding: const EdgeInsets.only(bottom: 4.0),
                   child: TabPageSelector(
-                    selectedColor: Theme.of(context).primaryIconTheme.color,
+                    selectedColor: Theme.of(context).primaryColor,
                     controller: widget.tabController,
                   ),
                 )
@@ -124,7 +123,8 @@ class PlanItineraryTabPagesState extends State<PlanItineraryTabPages>
     );
   }
 
-  Widget _buildItinerary(BuildContext context, PlanItinerary itinerary, AdEntity ad) {
+  Widget _buildItinerary(
+      BuildContext context, PlanItinerary itinerary, AdEntity ad) {
     return _isExpanded
         ? _buildItineraryExpanded(context, itinerary, ad)
         : _buildItineraryCollapsed(context, itinerary, ad);
@@ -153,16 +153,18 @@ class PlanItineraryTabPagesState extends State<PlanItineraryTabPages>
           if (ad != null && index >= itinerary.legs.length) {
             return Row(
               children: <Widget>[
-                Icon(Icons.sentiment_very_satisfied,
-                    color: Theme.of(context).accentColor),
+                Icon(
+                  Icons.sentiment_very_satisfied,
+                  color: Theme.of(context).accentColor,
+                ),
                 Expanded(
                   child: Container(
                     padding: const EdgeInsets.all(8.0),
                     child: RichText(
                       text: TextSpan(
-                          text: ad.text,
-                          style:
-                              TextStyle(color: Theme.of(context).accentColor)),
+                        text: ad.text,
+                        style: TextStyle(color: Theme.of(context).primaryColor),
+                      ),
                     ),
                   ),
                 ),
@@ -173,13 +175,17 @@ class PlanItineraryTabPagesState extends State<PlanItineraryTabPages>
           final PlanItineraryLeg leg = itinerary.legs[index];
           return Row(
             children: <Widget>[
-              Icon(leg.iconData(), color: theme.primaryIconTheme.color),
+              Icon(
+                leg.iconData(),
+              ),
               Expanded(
                 child: Container(
                   padding: const EdgeInsets.all(8.0),
                   child: RichText(
                     text: TextSpan(
                       text: leg.toInstruction(localization),
+                      style: TextStyle(
+                          color: Theme.of(context).textTheme.bodyText1.color),
                     ),
                   ),
                 ),
@@ -232,12 +238,12 @@ class PlanItineraryTabPagesState extends State<PlanItineraryTabPages>
         children: <Widget>[
           Text(
             "${localization.instructionDurationMinutes(itinerary.time)} ",
-            style: theme.primaryTextTheme.headline6,
+            style: theme.primaryTextTheme.headline6.copyWith(color: Colors.black),
           ),
           Text(
             "(${itinerary.distance >= 1000 ? localization.instructionDistanceKm((itinerary.distance / 1000).ceil()) : localization.instructionDistanceMeters(itinerary.distance)})",
             style:
-                theme.primaryTextTheme.headline6.copyWith(color: Colors.grey),
+                theme.primaryTextTheme.headline6.copyWith(color: theme.primaryColor),
           ),
         ],
       ),
@@ -258,22 +264,26 @@ class PlanItineraryTabPagesState extends State<PlanItineraryTabPages>
       children.add(
         Row(
           children: <Widget>[
-            Icon(leg.iconData(), color: theme.primaryIconTheme.color),
+            Icon(
+              leg.iconData(),
+            ),
             if (leg.mode == 'BUS')
               Text(
                 " ${leg.route}",
-                style: theme.primaryTextTheme.bodyText2.copyWith(
+                style: theme.primaryTextTheme.bodyText1.copyWith(
                   fontWeight: FontWeight.bold,
+                  color: Colors.black,
                 ),
               )
             else
               Text(
                 localization.instructionDurationMinutes(
                     (leg.duration.ceil() / 60).ceil()),
-                style: theme.primaryTextTheme.bodyText2,
+                style: theme.primaryTextTheme.bodyText1
+                    .copyWith(color: Colors.black),
               ),
             if (ad != null || leg != itinerary.legs.last)
-              const Icon(Icons.keyboard_arrow_right, color: Colors.grey)
+              Icon(Icons.keyboard_arrow_right, color: theme.primaryColor)
             else
               Container(),
           ],
@@ -292,26 +302,23 @@ class PlanItineraryTabPagesState extends State<PlanItineraryTabPages>
       );
     }
 
-    return Container(
+    return SizedBox(
       height: _animationSummaryHeight.value,
-      decoration: BoxDecoration(color: theme.primaryColor),
-      child: Material(
-        color: theme.primaryColor,
-        child: InkWell(
-          child: Container(
-            padding: const EdgeInsets.only(left: 12.0, right: 10.0),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: <Widget>[
-                      Row(children: children),
-                    ],
-                  ),
-                )
-              ],
-            ),
+      // decoration: BoxDecoration(color: Colors.red),
+      child: InkWell(
+        child: Container(
+          padding: const EdgeInsets.only(left: 12.0, right: 10.0),
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: <Widget>[
+                    Row(children: children),
+                  ],
+                ),
+              )
+            ],
           ),
         ),
       ),
@@ -325,7 +332,7 @@ class PlanItineraryTabPagesState extends State<PlanItineraryTabPages>
       icon: _isExpanded
           ? const Icon(Icons.keyboard_arrow_down)
           : const Icon(Icons.keyboard_arrow_up),
-      color: Theme.of(context).primaryIconTheme.color,
+      // color: Theme.of(context).primaryIconTheme.color,
       onPressed: () => _setIsExpanded(!_isExpanded),
     );
   }

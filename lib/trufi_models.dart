@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:latlong/latlong.dart';
 import 'package:trufi_core/l10n/trufi_localization.dart';
 
-import './trufi_configuration.dart';
 import 'entities/plan_entity/plan_entity.dart';
 import 'models/enums/defaults_location.dart';
 
@@ -32,6 +31,7 @@ class TrufiLocation implements TrufiPlace {
   static const String keyLatitude = 'latitude';
   static const String keyLongitude = 'longitude';
   static const String keyType = 'type';
+  static const String keyAddress = 'address';
 
   final String description;
   final double latitude;
@@ -112,6 +112,7 @@ class TrufiLocation implements TrufiPlace {
       latitude: json[keyLatitude] as double,
       longitude: json[keyLongitude] as double,
       type: json[keyType] as String,
+      address: json[keyAddress] != null ? json[keyAddress] as String : '',
     );
   }
 
@@ -121,6 +122,7 @@ class TrufiLocation implements TrufiPlace {
       keyLatitude: latitude,
       keyLongitude: longitude,
       keyType: type,
+      keyAddress: address ?? ''
     };
   }
 
@@ -133,15 +135,15 @@ class TrufiLocation implements TrufiPlace {
       o.type == type;
 
   @override
-  int get hashCode => description.hashCode ^ latitude.hashCode ^ longitude.hashCode;
+  int get hashCode =>
+      description.hashCode ^ latitude.hashCode ^ longitude.hashCode;
 
   @override
   String toString() {
     return '$latitude,$longitude';
   }
 
-  String get displayName {
-    final abbreviations = TrufiConfiguration().abbreviations;
+  String displayName(Map<String, String> abbreviations) {
     return abbreviations.keys.fold<String>(description, (
       description,
       abbreviation,
@@ -157,13 +159,20 @@ class TrufiLocation implements TrufiPlace {
     return latitude != 0 && longitude != 0;
   }
 
-  String translateValue(TrufiLocalization localization) {
-    String translate = displayName;
+  LatLng get latLng {
+    return LatLng(latitude, longitude);
+  }
+
+  String translateValue(
+    Map<String, String> abbreviations,
+    TrufiLocalization localization,
+  ) {
+    String translate = displayName(abbreviations);
     if (DefaultLocation.defaultHome.keyLocation == description) {
-    // TODO translate
+      // TODO translate
       translate = isLatLngDefined ? "Home" : "ADD HOME";
     } else if (DefaultLocation.defaultWork.keyLocation == description) {
-    // TODO translate
+      // TODO translate
       translate = isLatLngDefined ? "Work" : "ADD WORK";
     }
     return translate;
@@ -189,7 +198,8 @@ class TrufiStreet implements TrufiPlace {
 
   String get description => location.description;
 
-  String get displayName => location.displayName;
+  String displayName(Map<String, String> abbreviations) =>
+      location.displayName(abbreviations);
 }
 
 class TrufiStreetJunction {
@@ -209,9 +219,10 @@ class TrufiStreetJunction {
     return "${street1.location.description} & ${street2.location.description}";
   }
 
-  String displayName(TrufiLocalization localization) => localization.instructionJunction(
-        street1.displayName,
-        street2.displayName,
+  String displayName(TrufiLocalization localization) =>
+      localization.instructionJunction(
+        street1.location?.displayName,
+        street2.location?.displayName,
       );
 
   TrufiLocation location(TrufiLocalization localization) {
